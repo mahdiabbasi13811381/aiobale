@@ -112,6 +112,8 @@ from ..methods import (
     UpvotePost,
     RevokeUpvotedPost,
     GetMessageUpvoters,
+    OpenDialogue,
+    TimeInChat,
 )
 from ..types import (
     MessageContent,
@@ -3676,4 +3678,36 @@ class Client:
         message = self._ensure_info_message(message, rewrite_date=True)
         call = GetMessageUpvoters(message=message, load_more_state=state)
 
+        return await self(call)
+
+    async def open_dialogue(self, chat_id: int, chat_type: ChatType):
+        """
+        ارسال رویداد OpenDialogue به سرویس fanoos
+        این رویداد نشان می‌دهد که کاربر یک چت را باز کرده است
+        """
+        call = OpenDialogue(
+            peer_id=chat_id,
+            peer_type=chat_type,
+            client_name="web"
+        )
+        return await self(call)
+    
+    async def time_in_chat(
+        self, 
+        chat_id: int, 
+        chat_type: ChatType, 
+        duration: float,
+        unread_count: int = 0
+    ):
+        """
+        ارسال رویداد time_in_chat به سرویس fanoos
+        این رویداد نشان می‌دهد که کاربر چه مدتی در چت سپری کرده است
+        """
+        call = TimeInChat(
+            peer_id=chat_id,
+            peer_type=chat_type,
+            duration_seconds=duration,
+            unread_count=unread_count,
+            client_name="web"
+        )
         return await self(call)
